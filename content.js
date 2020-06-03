@@ -1,15 +1,26 @@
 const APP_TIMEOUT_MS = 100;
 const timer = (waitTime) => 
   new Promise(resolve => setTimeout(resolve, waitTime ));
-var isReading = false;
+let isReading = false;
+let options = {};
 
-document.addEventListener('dblclick', function(e) { 
-  console.log('directed-reading extension activated')  
+document.addEventListener('dblclick', async function(e) { 
+  await getOptions();
+  console.log(options);
+  
+  // abort if user disabled extension
+  if (options.disable) { isReading = false; return }
+
   isReading = !isReading;
   if (isReading) {
     beginReading(e.target);
   }
 });
+
+// // enable single-click to stop reading
+// document.addEventListener('click', function(e) {
+//   if (isReading) {isReading = false};
+// })
 
 /**
  * Tries to start reading text inside HTMLElement
@@ -19,13 +30,15 @@ document.addEventListener('dblclick', function(e) {
  * @param {HTMLElement} target element user clicks to be read
  */
 async function beginReading(target) {
-  while (target && isReading) {
+  while (target && isReading && !options.disable) {
     // console.log for dev/debugging
     console.log('beginReading function called: ')
     console.log(target)
 
     // read through the text
     await doChunkRead(target);
+    // reload options in case user updated
+    await getOptions();
 
     // update the value of target
     // to be its next sibling 
@@ -41,26 +54,27 @@ async function beginReading(target) {
   // a time, moving the <span> tag to 
   // highlight 
 function doChunkRead(elem) {
-  if (!elem.textContent) { return }
+  if (!elem.textContent || elem.nodeName === '#text') { return }
 
+  elem.scrollIntoView();
   const words = elem.textContent.split(" ");
   
   // initialize recursive highlight function
   focusWord(words, 0, elem);
-  return timer(APP_TIMEOUT_MS * words.length + 1)
+  return timer(options.speed * words.length + 1)
 }
 
 async function focusWord(words, word, elem) {
   // if done reading the section
   // or the user has clicked again
-  if (word > words.length - 1 || !isReading) { 
+  if (word > words.length - 1) { 
     elem.innerHTML = words.join(" ");
     return 
-  }
+  }else if (!isReading) { return }
 
   elem.innerHTML = renderHTML(words, word);
 
-  await timer(APP_TIMEOUT_MS);
+  await timer(options.speed);
 
   focusWord(words, word + 1, elem);
 }
@@ -78,4 +92,13 @@ function renderHTML(words, word) {
           ${words[word]}
           </span>
           ${chunkB}`;
+}
+
+function getOptions() {
+  return chrome.storage.sync.get({
+    speed: 150,
+    style: "yellow-hi",
+    disable: false
+  }, (items) => {options = items}
+  );
 }
