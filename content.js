@@ -1,9 +1,9 @@
-const APP_TIMEOUT_MS = 50;
+const APP_TIMEOUT_MS = 100;
 const timer = (waitTime) => 
   new Promise(resolve => setTimeout(resolve, waitTime ));
 var isReading = false;
 
-document.addEventListener('click', function(e) { 
+document.addEventListener('dblclick', function(e) { 
   console.log('directed-reading extension activated')  
   isReading = !isReading;
   if (isReading) {
