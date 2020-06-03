@@ -25,4 +25,46 @@ function toggleOptions() {
   }
 }
 
+function saveOptions() {
+  console.log("save options called");
+
+  const speed = document.getElementById('speed-control').value;
+  const style = document.querySelector('input[name=style]:checked').value;
+  const disable = document.getElementById('disable-control').checked;
+
+  chrome.storage.sync.set({
+    speed: speed,
+    style: style,
+    disable: disable
+  }, function() {
+    // Update status to let user know options were saved.
+    const status = document.getElementById('status');
+    status.textContent = 'Options saved.';
+    setTimeout(function() {
+      status.textContent = '';
+    }, 750);
+  });
+}
+
+/**
+ * load options from user storage
+ * or use default options
+ */
+function loadOptions() {
+  chrome.storage.sync.get({
+    speed: 150,
+    style: "yellow-hi",
+    disable: false
+  }, function(items) {
+    document.getElementById('speed-control').value = items.speed;
+    document.getElementById(items.style).checked = true;
+    document.getElementById('disable-control').checked = items.disable;
+  });
+}
+
+// load options on dom content loaded
+document.addEventListener('DOMContentLoaded', loadOptions);
+
+// add event listeners for options toggle and options form
 document.getElementById("options-toggle").addEventListener('click', toggleOptions);
+document.getElementById("options-form").addEventListener('change', saveOptions);
