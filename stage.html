@@ -1,18 +1,50 @@
 <div>
   <h1>Directed Reading</h1>
-  <p>control your attention</p>
   <hr />
-  <form>
+  <h4>Direct your focus & attention.</h4>
+  <p>Double click on text to start/stop reading.</p>
+  <hr />
+  <p id="options-toggle" class="blue">show options</p>
+  <form id="options-form" class="hidden">
     <label for="speed-control">Speed: </label>
-    <input id="speed-control" type="range" />
+    <input id="speed-control" type="range" min="50" max="200" />
     <label for="style-control">Style: </label>
     <div id="style-control">
-      <input type="radio" id="yellow-hi" name="gender" value="yellow-hi" checked>
+      <input type="radio" id="yellow-hi" name="style" value="yellow-hi" checked>
       <label for="yellow-hi">Yellow Highlight</label>
       <br>
-      <input type="radio" id="bold-text" name="gender" value="bold-text">
+      <input type="radio" id="bold-text" name="style" value="bold-text">
       <label for="bold-text">Bolden Text</label>
       <br>
     </div>
   </form>
+<script src="options.js"> </script>
 </div>
+<style>
+  h1 {
+    white-space: nowrap;
+  }
+  p {
+    text-align: right;
+  }
+  #options-toggle {
+    text-align: right;
+  }
+  .blue {
+    color:rgb(100, 100, 189);
+  }
+  .red {
+    color: rgb(173, 64, 64);
+  }
+  #options-toggle:hover {
+    opacity: 70%;
+    text-decoration: underline;
+  }
+  .not-hidden {
+    display: block;
+  }
+  .hidden {
+    display: none;
+  }
+</style>
+
