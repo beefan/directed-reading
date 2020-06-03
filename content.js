@@ -17,11 +17,6 @@ document.addEventListener('dblclick', async function(e) {
   }
 });
 
-// // enable single-click to stop reading
-// document.addEventListener('click', function(e) {
-//   if (isReading) {isReading = false};
-// })
-
 /**
  * Tries to start reading text inside HTMLElement
  * Reads through all text and then nextSibling
@@ -87,11 +82,26 @@ function renderHTML(words, word) {
                 .filter( (v, i) => i > word )
                 .join(" ");
 
-  return `${chunkA} 
-          <span style="background-color: yellow; border-radius: 3px;">
-          ${words[word]}
-          </span>
-          ${chunkB}`;
+  let result = "";
+  switch(options.style) {
+    case "yellow-hi":
+      result = `${chunkA} 
+                <span style="background-color: yellow; border-radius: 3px;">
+                ${words[word]}
+                </span>
+                ${chunkB}`;
+      break;
+    case "bold-text":
+      result = `<span style="font-weight: bold;">
+                ${chunkA} ${words[word]}
+                </span>
+                <span style="color: grey">
+                ${chunkB}
+                </span>`
+      break;
+  } 
+
+  return result;
 }
 
 function getOptions() {
