@@ -1,3 +1,7 @@
+/**
+ * Toggle options in the extension view.
+ * 
+ */
 function toggleOptions() {
   const options = document.getElementById("options-form");
   const label = options.previousSibling.previousSibling;
@@ -25,9 +29,11 @@ function toggleOptions() {
   }
 }
 
+/**
+ * save user options from settings in stage.html
+ * 
+ */
 function saveOptions() {
-  console.log("save options called");
-
   const speed = document.getElementById('speed-control').value;
   const style = document.querySelector('input[name=style]:checked').value;
   const disable = document.getElementById('disable-control').checked;
@@ -40,6 +46,7 @@ function saveOptions() {
     // Update status to let user know options were saved.
     const status = document.getElementById('status');
     status.textContent = 'Options saved.';
+    // let status fade after a time
     setTimeout(function() {
       status.textContent = '';
     }, 750);
