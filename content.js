@@ -1,21 +1,6 @@
-const APP_TIMEOUT_MS = 100;
 const timer = (waitTime) => 
   new Promise(resolve => setTimeout(resolve, waitTime ));
 let isReading = false;
-let options = {};
-
-document.addEventListener('dblclick', async function(e) { 
-  await getOptions();
-  console.log(options);
-  
-  // abort if user disabled extension
-  if (options.disable) { isReading = false; return }
-
-  isReading = !isReading;
-  if (isReading) {
-    beginReading(e.target);
-  }
-});
 
 /**
  * Tries to start reading text inside HTMLElement
@@ -25,22 +10,36 @@ document.addEventListener('dblclick', async function(e) {
  * @param {HTMLElement} target element user clicks to be read
  */
 async function beginReading(target) {
-  while (target && isReading && !options.disable) {
+  while (target && isReading) {
+
+    if (target.nodeName === "#text") {
+      target = target.nextSibling;
+      continue;
+    }
+
     // console.log for dev/debugging
     console.log('beginReading function called: ')
     console.log(target)
 
+    const options = await getOptions();
+    if (options.disable) { 
+      isReading = false;
+      break;
+     }
+
     // read through the text
-    await doChunkRead(target);
-    // reload options in case user updated
-    await getOptions();
+    const targetCopy = target.cloneNode(true);
+    await doChunkRead(target, options);
+    target.insertAdjacentElement('beforebegin', targetCopy);
 
     // update the value of target
     // to be its next sibling 
     if (!target.nextSibling && target.parent) {
       target = target.parent.nextSibling;
+      target.previousSibling.lastChild.remove();
     } else {
       target = target.nextSibling;
+      target.previousSibling.remove();
     }
   }
 }
@@ -48,18 +47,18 @@ async function beginReading(target) {
   // loop through the text, one word at
   // a time, moving the <span> tag to 
   // highlight 
-function doChunkRead(elem) {
-  if (!elem.textContent || elem.nodeName === '#text') { return }
+function doChunkRead(elem, options) {
+  if (!elem.textContent) { return }
 
-  elem.scrollIntoView();
+  elem.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
   const words = elem.textContent.split(" ");
   
   // initialize recursive highlight function
-  focusWord(words, 0, elem);
+  focusWord(words, 0, elem, options);
   return timer(options.speed * words.length + 1)
 }
 
-async function focusWord(words, word, elem) {
+async function focusWord(words, word, elem, options) {
   // if done reading the section
   // or the user has clicked again
   if (word > words.length - 1) { 
@@ -67,14 +66,14 @@ async function focusWord(words, word, elem) {
     return 
   }else if (!isReading) { return }
 
-  elem.innerHTML = renderHTML(words, word);
+  elem.innerHTML = renderHTML(words, word, options);
 
   await timer(options.speed);
 
-  focusWord(words, word + 1, elem);
+  focusWord(words, word + 1, elem, options);
 }
 
-function renderHTML(words, word) {
+function renderHTML(words, word, options) {
   const chunkA = words
                 .filter( (v, i) => i < word )
                 .join(" ");
@@ -104,11 +103,23 @@ function renderHTML(words, word) {
   return result;
 }
 
-function getOptions() {
-  return chrome.storage.sync.get({
+async function getOptions() {
+  let options = null;
+  chrome.storage.sync.get({
     speed: 150,
     style: "yellow-hi",
     disable: false
-  }, (items) => {options = items}
+  }, (items) => {options =  items;}
   );
+
+  await timer(200);
+
+  return options;
 }
+
+document.addEventListener('dblclick', e => { 
+  isReading = true;
+  beginReading(e.target);
+});
+
+document.addEventListener('click', e => isReading = false );

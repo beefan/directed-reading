@@ -1,10 +1,3 @@
-// load options on dom content loaded
-document.addEventListener('DOMContentLoaded', loadOptions);
-
-// add event listeners for options toggle and options form
-document.getElementById("options-toggle").addEventListener('click', toggleOptions);
-document.getElementById("options-form").addEventListener('change', saveOptions);
-
 function toggleOptions() {
   const options = document.getElementById("options-form");
   const label = options.previousSibling.previousSibling;
@@ -68,3 +61,10 @@ function loadOptions() {
     document.getElementById('disable-control').checked = items.disable;
   });
 }
+
+// load options on dom content loaded
+document.addEventListener('DOMContentLoaded', loadOptions);
+
+// add event listeners for options toggle and options form
+document.getElementById("options-toggle").addEventListener('click', toggleOptions);
+document.getElementById("options-form").addEventListener('change', saveOptions);
