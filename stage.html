@@ -1,4 +1,4 @@
-<div>
+<div id="master-container">
   <h1>Directed Reading</h1>
   <hr />
   <h4>Direct your focus & attention.</h4>
@@ -24,8 +24,8 @@
 <script src="options.js"> </script>
 </div>
 <style>
-  div {
-    height: auto;
+  #master-container {
+    display: inline-block;
   }
   h1 {
     white-space: nowrap;
@@ -48,9 +48,11 @@
   }
   .not-hidden {
     display: block;
+    height: auto;
   }
   .hidden {
     display: none;
+    height: 0px;
   }
 </style>
 
