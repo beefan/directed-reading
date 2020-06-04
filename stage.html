@@ -1,8 +1,8 @@
 <div id="master-container">
-  <h1>Directed Reading</h1>
-  <hr />
-  <h4>Direct your focus & attention.</h4>
-  <p>Double click on text to start. Single click to stop.</p>
+  <h2>Directed <span class="drk-blue" >Reading</span></h2>
+  <h4>a <span class="highlight" >pacer</span> for your attention</h4>
+  <p>double click to read</p>
+  <p>click to stop</p>
   <hr />
   <p id="options-toggle" class="blue">show options</p>
   <form id="options-form" class="hidden">
@@ -27,14 +27,21 @@
   #master-container {
     display: inline-block;
   }
-  h1 {
+  h2 {
     white-space: nowrap;
+    color: #f4a261;
   }
   p {
     text-align: right;
   }
   #options-toggle {
     text-align: right;
+  }
+  .highlight {
+    background-color: yellow;
+  }
+  .drk-blue {
+    color: #4580c0;
   }
   .blue {
     color:rgb(100, 100, 189);
