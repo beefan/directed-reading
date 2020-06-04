@@ -1,3 +1,6 @@
+/**
+ * Listening for content command to toggle badge info
+ */
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     console.log(sender.tab ?
@@ -12,3 +15,21 @@ chrome.runtime.onMessage.addListener(
       sendResponse({msg: "turned badge off"});
     }
   });
+
+  /**
+   * Callback function to inject content script when
+   * a user clicks the extension from context menu
+   * 
+   * @param {Object} info containing context from what was clicked    
+   * @param {Tab.tab} tab Chrome tab
+   */
+  function injectContentScript(info, tab) {
+    chrome.tabs.executeScript(tab.id, {file: "content.js"}, () => {
+      console.log("directed reading extension enabled");
+    })
+  }
+
+  // create chrome context menus so that 
+  // ext can be activated explicitly 
+  chrome.contextMenus.create({"title": 'Enable Directed Reading'})
+  chrome.contextMenus.onClicked.addListener(injectContentScript);

@@ -1,7 +1,8 @@
 {
   "name": "Directed Reading",
-  "description" : "a directed reading assistant to enable focused attention",
-  "version": "1.0",
+  "short_name": "read fast",
+  "description" : "a pacer for your attention",
+  "version": "0.7",
   "manifest_version": 2,
   "browser_action": {
     "default_popup": "stage.html",
@@ -15,17 +16,11 @@
    "128": "logo_128.png" 
   },
   "permissions": [
+    "storage",
     "activeTab",
-    "storage"
+    "contextMenus"
   ],
   "background": {
-    "scripts": ["background.js"],
-    "persistent": false
-  },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"]
-    }
-  ]
+    "scripts": ["background.js"]
+  }
 }
