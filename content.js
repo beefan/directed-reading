@@ -1,6 +1,7 @@
 const timer = (waitTime) => 
   new Promise(resolve => setTimeout(resolve, waitTime ));
 let isReading = false;
+let chunking = true;
 
 /**
  * Tries to start reading text inside HTMLElement
@@ -44,9 +45,7 @@ async function beginReading(target) {
   }
 }
 
-  // loop through the text, one word at
-  // a time, moving the <span> tag to 
-  // highlight 
+
 function doChunkRead(elem, options) {
   if (!elem.textContent) { return }
 
@@ -54,23 +53,19 @@ function doChunkRead(elem, options) {
   const words = elem.textContent.split(" ");
   
   // initialize recursive highlight function
-  focusWord(words, 0, elem, options);
-  return timer(options.speed * words.length + 1)
+  return focusWord(words, 0, elem, options);
 }
 
 async function focusWord(words, word, elem, options) {
   // if done reading the section
   // or the user has clicked again
-  if (word > words.length - 1) { 
-    elem.innerHTML = words.join(" ");
-    return 
-  }else if (!isReading) { return }
+  if (word > words.length - 1 || !isReading) { return }
 
   elem.innerHTML = renderHTML(words, word, options);
 
   await timer(options.speed);
 
-  focusWord(words, word + 1, elem, options);
+  return focusWord(words, word + 1, elem, options);
 }
 
 function renderHTML(words, word, options) {
