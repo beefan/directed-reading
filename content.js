@@ -6,6 +6,8 @@
  * @param {HTMLElement} target element user clicks to be read
  */
 async function beginReading(target) {
+  flipBadge();
+
   // start with target and keep going through the DOM
   // until we get an undefined target or stop reading
   while (target && isReading) {
@@ -20,7 +22,7 @@ async function beginReading(target) {
     // if we should be disabled now, abort mission
     const options = await getOptions();
     if (options.disable) { 
-      isReading = false;
+      stopReading();
       break;
      }
 
@@ -43,6 +45,8 @@ async function beginReading(target) {
       target.previousSibling.remove();
     }
   }
+
+  stopReading();
 }
 
 /**
@@ -150,6 +154,20 @@ async function getOptions() {
   return options;
 }
 
+function flipBadge(){
+  isReading = true;
+  chrome.runtime.sendMessage({cmd: "badge-on"}, function(response) {
+    console.log(response.msg);
+  });
+}
+
+function stopReading() {
+  isReading = false;
+  chrome.runtime.sendMessage({cmd: "badge-off"}, function(response) {
+    console.log(response.msg);
+  });
+}
+
 // create a timer to be reused
 const timer = (waitTime) => 
   new Promise(resolve => setTimeout(resolve, waitTime ));
@@ -159,9 +177,8 @@ let chunking = true;
 
 // register dblclick to start reading
 document.addEventListener('dblclick', e => { 
-  isReading = true;
   beginReading(e.target);
 });
 
 // register click to end reading
-document.addEventListener('click', e => isReading = false );
+document.addEventListener('click', e => stopReading() );
