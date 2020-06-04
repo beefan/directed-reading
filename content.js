@@ -86,7 +86,7 @@ async function focusWord(words, word, elem, options) {
   elem.innerHTML = renderHTML(words, word, options);
 
   // wait before focusing on the next word
-  await timer(options.speed);
+  await timer(260 - options.speed);
 
   return focusWord(words, word + 1, elem, options);
 }
